@@ -5,8 +5,7 @@ HOW THIS FILE WORKS
 This is the assistant's single source of truth. Everything below is handed to the
 assistant as Honor Health Network's official 401(k) information. Edit this file to
 add or correct answers, then push to GitHub. Railway redeploys automatically.
-Keep it factual and plain. The forms referenced as /forms/...pdf live in
-public/forms/ and are downloadable from the site.
+The forms referenced as /forms/...pdf live in public/forms/ and download from the site.
 -->
 
 ## Plan basics
@@ -18,10 +17,7 @@ public/forms/ and are downloadable from the site.
 ## Eligibility and enrollment
 - You become eligible 6 months after your date of hire.
 - Your enrollment becomes effective the first of the month after HR receives your completed enrollment form, as long as you have reached your 6 months.
-- How to enroll:
-  - Complete the enrollment form HR provides: https://form.jotform.com/221354273322144
-  - Or register online at americanfunds.com/retire (click Log In, then New User), or fill out the paper forms in the enrollment booklet and return them to HR.
-- Full enrollment booklet (plan details, FAQs, and forms): /forms/401k-enrollment-booklet.pdf
+- How to enroll: complete the online enrollment form here: https://form.jotform.com/221354273322144
 - If you don't choose investments when you enroll, your money goes into the plan's default investment until you pick your own. You can change it later.
 
 ## Contributions
@@ -29,14 +25,14 @@ public/forms/ and are downloadable from the site.
 - IRS limit for 2026: you can contribute up to $24,500 of your own pay. (The IRS sets this and it changes most years.)
 - Catch-up if you're age 50 or older: an extra $8,000 in 2026.
 - "Super" catch-up if you're age 60 to 63: an extra $11,250 in 2026 (instead of the $8,000).
-- Higher earners: starting in 2026, IRS rules require that if you earned more than $150,000 the prior year, your catch-up contributions be made as Roth (after-tax). Check with HR for how this applies to you.
+- Higher earners: starting in 2026, IRS rules require that if you earned more than $150,000 the prior year, your catch-up contributions be made as Roth (after-tax).
 - Once enrolled, you can change your contribution amount on the American Funds website or app.
 
 ## Traditional vs Roth (the two ways to contribute)
 The plan offers both. You can use one or split between them.
 - Traditional (pre-tax): money comes out before taxes, which lowers your taxable income now. You pay taxes later, when you withdraw in retirement.
 - Roth (after-tax): money comes out after taxes, so there's no tax break now, but qualified withdrawals in retirement are generally tax-free.
-- Which is better depends on your own tax situation. For personalized help, contact the plan's financial professional or The Waterford Group (see Contacts).
+- Which is better depends on your own tax situation. For personalized help, submit a request through the benefits help form (see "Need more help?") or speak with a licensed tax or financial professional.
 
 ## Employer match
 - The company matches dollar for dollar on the first 3% of pay you contribute, then 50 cents on the dollar on the next 2%.
@@ -62,19 +58,19 @@ The plan offers both. You can use one or split between them.
 - Two approaches:
   - Target date funds: one "do-it-for-me" fund based on the year you plan to retire. The mix adjusts automatically over time. You usually pick the fund closest to the year you'll turn about 65.
   - Individual funds: build your own mix from the plan's lineup (growth, growth-and-income, balanced, bond, and other categories).
-- This assistant does not recommend specific funds or give investment advice. For help choosing, contact the plan's financial professional or The Waterford Group (see Contacts), and review the fund details, returns, and fees in the booklet: /forms/401k-enrollment-booklet.pdf
+- This assistant does not recommend specific funds or give investment advice. For help choosing, submit a request through the benefits help form (see "Need more help?") or speak with a licensed financial professional. Review fund details, returns, and fees in the booklet: /forms/401k-enrollment-booklet.pdf
 
 ## Rolling money in (from an old 401(k) or IRA)
 - If you have savings in a former employer's plan or an IRA, you may be able to roll it into this plan.
 - Roth IRAs cannot be rolled in. Most other types can (401(k), 403(b), governmental 457(b), traditional or SEP IRA, and similar).
-- Steps: confirm with HR that you're eligible to roll in, contact your old provider for their paperwork, complete the Incoming Rollover Request form, and return it to HR.
+- Steps: confirm you're eligible to roll in, contact your old provider for their paperwork, complete the Incoming Rollover Request form, and return it as directed on the form.
 - Form: /forms/incoming-rollover-request.pdf
 - Rollover questions: American Funds at (800) 421-4120.
 
 ## Taking money out
 Your 401(k) is meant for retirement, but there are a few ways to access money if you need to:
 - Plan loan: borrow from your account and pay yourself back with interest. Fees: $85 to set up, plus $50 per year while the loan is active.
-- Hardship withdrawal: for certain immediate and heavy financial needs. You must give supporting documentation to HR, and HR has to approve it before it can be processed. A $25 processing fee applies. Taxes apply, and if you're under age 59½ there may be an extra 10% early withdrawal penalty.
+- Hardship withdrawal: for certain immediate and heavy financial needs. You must provide supporting documentation for review and approval before it can be processed. A $25 processing fee applies. Taxes apply, and if you're under age 59½ there may be an extra 10% early withdrawal penalty.
   - Form: /forms/hardship-withdrawal-request.pdf
 - In-service withdrawal: you may be able to take a withdrawal while still employed. Taxes and a possible 10% early penalty may apply.
 - In general, withdrawals (other than loans and qualified Roth withdrawals) are taxable, and taking money before age 59½ usually adds a 10% penalty unless an exception applies.
@@ -88,13 +84,10 @@ Your 401(k) is meant for retirement, but there are a few ways to access money if
 - One-time distribution fee: $85 per request. Expedited delivery is $25.
 - Investment expense ratios also apply, depending on the funds you choose (listed in the booklet).
 
-## Contacts
-- HHN benefits / plan contact: Gwen Buse — (717) 239-9602 — gbuse@honorhealthnetwork.com
-- Plan's financial professional: Michael J. Merriman — (585) 434-0648
-- Investment consultants (help choosing funds or enrolling): The Waterford Group — (585) 434-0649 — twg@waterfordgroupny.com
-- American Funds (forms, withdrawals, rollovers): (800) 421-4120
-- American Funds account line, 24/7: (877) 833-9322
-- American Funds website: americanfunds.com/retire
+## Need more help?
+- For any other questions, or help you can't get here, submit a request through the benefits help form: https://app.smartsheet.com/b/form/c02dbe410b5245078bbe7ce22e59eb13
+- To access or manage your American Funds account (balance, contributions, investments, statements, withdrawals): americanfunds.com/retire, the app "American Funds RKDirect 401k," or the 24/7 account line (877) 833-9322.
+- For help completing forms (withdrawals, rollovers): American Funds at (800) 421-4120.
 
 ## Forms (downloads)
 - Enrollment booklet: /forms/401k-enrollment-booklet.pdf

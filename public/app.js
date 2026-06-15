@@ -29,8 +29,8 @@ STARTERS.forEach((q) => {
 const BOT_AVATAR = `
   <div class="avatar" aria-hidden="true">
     <svg width="16" height="16" viewBox="0 0 40 40">
-      <path d="M9 27 C 15 27, 18 14, 31 11" fill="none" stroke="#D7A84F" stroke-width="3" stroke-linecap="round" />
-      <circle cx="31" cy="11" r="3.4" fill="#D7A84F" />
+      <path d="M9 27 C 15 27, 18 14, 31 11" fill="none" stroke="#9DCB3B" stroke-width="3" stroke-linecap="round" />
+      <circle cx="31" cy="11" r="3.4" fill="#FFFFFF" />
     </svg>
   </div>`;
 
