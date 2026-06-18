@@ -1,10 +1,10 @@
 const STARTERS = [
-  "Am I eligible yet, and when can I enroll?",
-  "How much does the company match?",
+  "When am I eligible for health benefits?",
+  "What medical plans can I choose from?",
+  "How much does the 401(k) match?",
+  "How do I enroll, and what's the deadline?",
+  "Can I change my health plan mid-year?",
   "What's the difference between traditional and Roth?",
-  "How do I log in to my account?",
-  "Can I roll over an old 401(k)?",
-  "Can I take money out of my 401(k)?",
 ];
 
 const scrollEl = document.getElementById("scroll");
