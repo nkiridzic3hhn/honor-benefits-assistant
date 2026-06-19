@@ -1,0 +1,22 @@
+# Copy this file to .env for local development. Never commit your real .env.
+# On Railway, set these in the service's Variables tab instead.
+
+# Required: your Anthropic API key (starts with sk-ant-...)
+ANTHROPIC_API_KEY=your-key-here
+
+# Optional: override the model. Defaults to claude-sonnet-4-6.
+# Use claude-haiku-4-5-20251001 for lower cost on high volume.
+CLAUDE_MODEL=claude-sonnet-4-6
+
+# Question review log (the /admin page).
+# DATABASE_URL is injected automatically when you add the Postgres plugin in
+# Railway. If it's missing, the assistant still runs; logging and /admin are off.
+DATABASE_URL=
+
+# Set to true only if you connect to Postgres over its PUBLIC url (needs SSL).
+# Leave blank/false when using Railway's internal connection.
+PGSSL=
+
+# Password for the /admin review page. Pick a strong shared password and give it
+# only to HR. Any username works at the login prompt; only the password is checked.
+ADMIN_PASSWORD=
