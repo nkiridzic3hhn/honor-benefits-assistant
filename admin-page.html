@@ -1,22 +1,136 @@
-# Copy this file to .env for local development. Never commit your real .env.
-# On Railway, set these in the service's Variables tab instead.
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex" />
+  <title>HHN Benefits — Question Review</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Spectral:wght@500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --navy: #1F3A6E; --cyan: #1FAACE; --green: #6DB43F; --bg: #EEF3F8;
+      --line: #d7e0ec; --muted: #5b6b82; --flag: #c0392b;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: #1c2733; font-family: "IBM Plex Sans", system-ui, sans-serif; }
+    header { background: #fff; border-bottom: 1px solid var(--line); padding: 16px 22px; display: flex; align-items: baseline; gap: 14px; }
+    header h1 { font-family: "Spectral", serif; color: var(--navy); font-size: 20px; margin: 0; }
+    header .sub { color: var(--muted); font-size: 13px; }
+    .wrap { max-width: 1100px; margin: 0 auto; padding: 20px 22px 60px; }
+    .controls { display: flex; gap: 8px; align-items: center; margin: 14px 0 18px; flex-wrap: wrap; }
+    .tab { border: 1px solid var(--line); background: #fff; color: var(--navy); padding: 7px 14px; border-radius: 999px; cursor: pointer; font-size: 13px; font-weight: 500; }
+    .tab.active { background: var(--navy); color: #fff; border-color: var(--navy); }
+    .count { color: var(--muted); font-size: 13px; margin-left: auto; }
+    .card { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; margin-bottom: 12px; }
+    .card.flagged { border-left: 4px solid var(--flag); }
+    .meta { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 8px; font-size: 12px; color: var(--muted); }
+    .pill { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 999px; }
+    .pill.hr { background: #fdecea; color: var(--flag); }
+    .pill.ok { background: #eaf5e0; color: #3e6b1a; }
+    .q { font-weight: 600; font-size: 15px; margin: 2px 0 8px; }
+    .a { font-size: 14px; color: #34414f; white-space: pre-wrap; border-top: 1px dashed var(--line); padding-top: 8px; }
+    .row-actions { margin-top: 12px; }
+    .btn { border: 1px solid var(--line); background: #fff; color: var(--navy); padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 500; }
+    .btn:hover { background: var(--bg); }
+    .empty, .note { color: var(--muted); font-size: 14px; padding: 30px 0; text-align: center; }
+    .note.error { color: var(--flag); }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Question Review</h1>
+    <span class="sub">What employees are asking the Benefits Assistant</span>
+  </header>
+  <div class="wrap">
+    <div class="controls">
+      <button class="tab active" data-filter="needs_hr">Needs HR</button>
+      <button class="tab" data-filter="unreviewed">Unreviewed</button>
+      <button class="tab" data-filter="all">All</button>
+      <span class="count" id="count"></span>
+    </div>
+    <div id="list"></div>
+  </div>
 
-# Required: your Anthropic API key (starts with sk-ant-...)
-ANTHROPIC_API_KEY=your-key-here
+  <script>
+    const listEl = document.getElementById("list");
+    const countEl = document.getElementById("count");
+    let filter = "needs_hr";
 
-# Optional: override the model. Defaults to claude-sonnet-4-6.
-# Use claude-haiku-4-5-20251001 for lower cost on high volume.
-CLAUDE_MODEL=claude-sonnet-4-6
+    function fmtDate(s) {
+      try { return new Date(s).toLocaleString(); } catch { return s; }
+    }
+    function esc(s) {
+      return (s || "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+    }
 
-# Question review log (the /admin page).
-# DATABASE_URL is injected automatically when you add the Postgres plugin in
-# Railway. If it's missing, the assistant still runs; logging and /admin are off.
-DATABASE_URL=
+    async function load() {
+      listEl.innerHTML = '<div class="note">Loading…</div>';
+      let data;
+      try {
+        const res = await fetch("/api/admin/questions?filter=" + encodeURIComponent(filter));
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        data = await res.json();
+      } catch (e) {
+        listEl.innerHTML = '<div class="note error">Could not load the review log. Try refreshing.</div>';
+        return;
+      }
+      if (data.dbReady === false) {
+        listEl.innerHTML = '<div class="note">The database isn\'t connected yet, so there\'s nothing to show. Add the Postgres plugin in Railway and redeploy.</div>';
+        countEl.textContent = "";
+        return;
+      }
+      const rows = data.rows || [];
+      countEl.textContent = rows.length + (rows.length === 1 ? " entry" : " entries");
+      if (rows.length === 0) {
+        listEl.innerHTML = '<div class="empty">Nothing here right now.</div>';
+        return;
+      }
+      listEl.innerHTML = rows.map(renderCard).join("");
+    }
 
-# Set to true only if you connect to Postgres over its PUBLIC url (needs SSL).
-# Leave blank/false when using Railway's internal connection.
-PGSSL=
+    function renderCard(r) {
+      const flagged = r.needs_hr ? " flagged" : "";
+      const hrPill = r.needs_hr ? '<span class="pill hr">Needs HR</span>' : "";
+      const reviewedPill = r.reviewed ? '<span class="pill ok">Reviewed</span>' : "";
+      const btnLabel = r.reviewed ? "Mark unreviewed" : "Mark reviewed";
+      return `
+        <div class="card${flagged}" data-id="${r.id}">
+          <div class="meta">
+            ${hrPill}${reviewedPill}
+            <span>${fmtDate(r.created_at)}</span>
+            ${r.session_id ? '<span>· session ' + esc(String(r.session_id).slice(0, 8)) + '</span>' : ''}
+          </div>
+          <div class="q">${esc(r.question)}</div>
+          <div class="a">${esc(r.answer)}</div>
+          <div class="row-actions">
+            <button class="btn" onclick="toggleReview(${r.id}, ${!r.reviewed})">${btnLabel}</button>
+          </div>
+        </div>`;
+    }
 
-# Password for the /admin review page. Pick a strong shared password and give it
-# only to HR. Any username works at the login prompt; only the password is checked.
-ADMIN_PASSWORD=
+    async function toggleReview(id, reviewed) {
+      try {
+        await fetch("/api/admin/questions/" + id + "/review", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ reviewed }),
+        });
+        load();
+      } catch (e) {
+        alert("Could not update that entry. Try again.");
+      }
+    }
+
+    document.querySelectorAll(".tab").forEach((t) => {
+      t.addEventListener("click", () => {
+        document.querySelectorAll(".tab").forEach((x) => x.classList.remove("active"));
+        t.classList.add("active");
+        filter = t.dataset.filter;
+        load();
+      });
+    });
+
+    load();
+  </script>
+</body>
+</html>

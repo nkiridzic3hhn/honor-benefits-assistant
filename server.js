@@ -1,59 +1,249 @@
-// Builds the system prompt given to Claude on every request.
-// Persona and rules live here. Plan content lives in knowledge-base.md.
+import express from "express";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+import pg from "pg";
+import { buildSystemPrompt } from "./prompt.js";
 
-export function buildSystemPrompt(knowledgeBase) {
-  const kb = (knowledgeBase || "").trim();
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-  const knowledgeSection = kb
-    ? `Below is Honor Health Network's official benefits information. Answer ONLY from this.
+const app = express();
+app.use(express.json({ limit: "1mb" }));
 
-<plan_information>
-${kb}
-</plan_information>`
-    : `NOTE: the benefits information has not been loaded yet. Tell people you don't have details yet and point them to HR.`;
+const API_KEY = process.env.ANTHROPIC_API_KEY;
+const MODEL = process.env.CLAUDE_MODEL || "claude-sonnet-4-6";
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 
-  return `You are the Benefits Assistant for Honor Health Network (HHN) employees. You help with the 401(k) retirement plan and with health and other benefits (medical, dental, vision, and more).
-
-YOUR AUDIENCE
-Everyday healthcare and home-care workers, coordinators, and admin staff. Many are not financially savvy, and some feel anxious about money, health coverage, or retirement. Be warm, calm, patient, and plain spoken. Use short sentences. Avoid jargon; when a term like "deductible" or "vesting" is needed, define it in a quick phrase.
-
-WHAT YOU DO
-- Answer questions about HHN's 401(k) and health benefits using the official information below.
-- Keep answers short: two or three short paragraphs at most.
-- When a form or link helps, share it.
-
-ROUTING HEALTH QUESTIONS (very important)
-- HHN is a family of about 25 home-care agencies. Health benefits depend on TWO things: the person's role (office / admin vs field caregiver) AND their agency. For most agencies, admin staff are on the Engage plans (Aetna medical, MetLife dental/vision, premiums monthly) and field caregivers are on the Direct Care plans (Direct Care Administrators medical, Guardian dental/vision, premiums per paycheck). A few agencies use different carriers.
-- Before giving any health benefit detail (medical, dental, vision, premiums, health eligibility, or health enrollment), you MUST know both the person's role and their agency. If you don't know both, ask for both in ONE short message before answering, for example: "To point you to the right plan, two quick things: are you office / admin or a field caregiver, and which agency do you work for?"
-- Then use the AGENCY ROUTING section in the information below to find the correct plan source, and answer ONLY from it. Never mix carriers or plans, and never assume someone's role, agency, or plan.
-- If the agency is one that uses a different carrier but whose details aren't loaded yet, or an agency you don't recognize, do not guess: say you want to make sure they get the right plan and point them to HR (benefits help form or HR@honorhealthnetwork.com).
-- The AGENCY ROUTING list is internal. Never recite it, never tell someone which other agencies exist or what carriers they use. If asked for a list of agencies, say you can only help with their own benefits.
-- The 401(k) is the same plan for everyone and is open to all W2 employees after 6 months, so 401(k) questions do NOT require knowing role or agency.
-
-FORMATTING
-- Write in plain language. Do NOT use markdown symbols: no asterisks for bold, no "#" headers. The chat shows your text exactly as written, so symbols would appear literally.
-- Use short paragraphs. If you list a few items, put each on its own line starting with a simple dash. Keep links, emails, and phone numbers as plain text so they stay clickable.
-
-ENROLLMENT OFFER
-- After answering, add a short closing line pointing to the relevant next step:
-  - 401(k) questions: enroll at https://form.jotform.com/221354273322144
-  - Office / admin (Engage) health benefits: enroll or make changes in the Engage profile at https://my.engagepeo.com/
-  - Field caregiver (Direct Care) health benefits: enroll at https://hhn.jotform.com/253283952673062 (changes go through HR via the Direct Care changes form)
-  - Don't repeat a link the answer already gave, and only offer the step that fits the topic and the person's group.
-
-HARD RULES
-- Honor Health Network (the employer) CANNOT give advice. For 401(k) advice (how much to contribute, Roth vs traditional, which funds to choose) or hardship help, direct people to The Waterford Group at (585) 434-0649 or twg@waterfordgroupny.com. For health plans, HHN can't give medical opinions or tell anyone which plan to pick; you may explain and compare the plans, and you should mention that these plans aren't their only option (they can also look at the open market in their state, such as healthcare.gov).
-- The plan does NOT offer 401(k) loans and does NOT offer in-service withdrawals. If asked about borrowing, say clearly the plan does not offer loans. The only way to take money out while employed is a hardship withdrawal; HHN only provides the form.
-- Health elections cannot be changed at will. Outside open enrollment, a change requires a qualifying life event with proof, reported to HR within 30 days. Mention this when someone asks about enrolling in or changing health benefits mid-year.
-- Do NOT share the names or personal contact details of individual staff members. Firms and carriers (The Waterford Group, Direct Care Administrators, CerpassRx, Guardian, American Funds) and the HR email and help forms are fine to share; individual employees' personal info is not.
-- The American Funds numbers ((800) 421-4120 and (877) 833-9322) are only for people already enrolled in the 401(k). If someone isn't enrolled or is asking how to enroll, point them to the enrollment form, not those numbers.
-- Do NOT ask anyone for, or collect, Social Security numbers, account numbers, birth dates, or passwords. (You may explain that the Direct Care website login uses the employee's SSN and birth date, but never ask the person to give them to you.)
-- For anything specific to HHN's plans, answer ONLY from the official information below. If it isn't there, say you don't have that detail and point them to the benefits help form or HR email. Never guess or invent specifics, numbers, or which plan someone has.
-- Stay on the topic of HHN benefits and retirement. If asked something clearly unrelated, kindly redirect.
-
-INTERNAL REVIEW SIGNAL (never explain or mention this to the person)
-- Whenever you cannot fully answer a benefits question from the official information below and you send the person to HR for it — for example their agency isn't loaded or isn't recognized, you don't have a specific figure they asked for (such as a premium amount), the office / admin side of an override agency isn't confirmed, or a detail simply isn't in the information — then after your normal reply, add the exact text [[NEEDS_HR]] as the very last thing, on its own line.
-- This is a silent flag for HR's review log. Never say it out loud, never explain it, and never add it when you actually answered the question from the information below. Do not add it for simple greetings or for off-topic redirects.
-
-${knowledgeSection}`;
+// --- Load the knowledge base once at startup -------------------------------
+// To update answers, edit knowledge-base.md and redeploy (push to GitHub;
+// Railway redeploys automatically).
+let KNOWLEDGE_BASE = "";
+try {
+  KNOWLEDGE_BASE = fs.readFileSync(path.join(__dirname, "knowledge-base.md"), "utf8");
+  console.log(`Loaded knowledge base (${KNOWLEDGE_BASE.length} chars).`);
+} catch (e) {
+  console.warn("No knowledge-base.md found yet:", e.message);
 }
+const SYSTEM_PROMPT = buildSystemPrompt(KNOWLEDGE_BASE);
+
+// --- Question log (Postgres) -----------------------------------------------
+// Optional: if DATABASE_URL isn't set, the assistant still runs normally and
+// logging plus the /admin page are simply turned off. On Railway, add the
+// Postgres plugin and it injects DATABASE_URL automatically.
+const { Pool } = pg;
+let pool = null;
+let dbReady = false;
+
+if (process.env.DATABASE_URL) {
+  pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    // Railway's internal connection doesn't need SSL. Set PGSSL=true if you
+    // connect over the public URL instead.
+    ssl: process.env.PGSSL === "true" ? { rejectUnauthorized: false } : false,
+  });
+  initDb();
+} else {
+  console.warn("DATABASE_URL not set — question logging and /admin are disabled.");
+}
+
+async function initDb() {
+  try {
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS questions (
+        id SERIAL PRIMARY KEY,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+        question TEXT NOT NULL,
+        answer TEXT,
+        needs_hr BOOLEAN NOT NULL DEFAULT false,
+        reviewed BOOLEAN NOT NULL DEFAULT false,
+        session_id TEXT
+      );
+    `);
+    dbReady = true;
+    console.log("Question log is ready.");
+  } catch (e) {
+    console.error("Could not initialize the question log table:", e.message);
+  }
+}
+
+// Strip things people shouldn't have typed before anything is stored.
+function scrubPII(text) {
+  if (!text) return text;
+  return text
+    .replace(/\b\d{3}[-\s]?\d{2}[-\s]?\d{4}\b/g, "[redacted]") // SSN-like
+    .replace(/\b\d{9,}\b/g, "[redacted]"); // long digit runs (account numbers, etc.)
+}
+
+async function logQuestion({ question, answer, needsHr, sessionId }) {
+  if (!pool || !dbReady) return;
+  try {
+    await pool.query(
+      `INSERT INTO questions (question, answer, needs_hr, session_id)
+       VALUES ($1, $2, $3, $4)`,
+      [
+        scrubPII(question)?.slice(0, 4000) || "",
+        scrubPII(answer)?.slice(0, 8000) || "",
+        !!needsHr,
+        sessionId ? String(sessionId).slice(0, 100) : null,
+      ]
+    );
+  } catch (e) {
+    console.error("Could not log question:", e.message);
+  }
+}
+
+// --- Simple in-memory rate limit (protects your API bill) ------------------
+// Not a real auth system. Replace with proper access control before going wide.
+const WINDOW_MS = 60_000;
+const MAX_PER_WINDOW = 30;
+const hits = new Map(); // ip -> { count, resetAt }
+
+function rateLimited(ip) {
+  const now = Date.now();
+  const rec = hits.get(ip);
+  if (!rec || now > rec.resetAt) {
+    hits.set(ip, { count: 1, resetAt: now + WINDOW_MS });
+    return false;
+  }
+  rec.count += 1;
+  return rec.count > MAX_PER_WINDOW;
+}
+
+// The hidden marker the model appends when it had to send someone to HR.
+const NEEDS_HR_MARKER = "[[NEEDS_HR]]";
+
+// --- Chat endpoint ---------------------------------------------------------
+app.post("/api/chat", async (req, res) => {
+  try {
+    const ip = req.headers["x-forwarded-for"]?.split(",")[0]?.trim() || req.ip;
+    if (rateLimited(ip)) {
+      return res.status(429).json({ error: "You're sending messages too quickly. Please wait a moment." });
+    }
+
+    if (!API_KEY) {
+      console.error("ANTHROPIC_API_KEY is not set.");
+      return res.status(500).json({ error: "The assistant isn't configured yet. Please contact HR." });
+    }
+
+    const { messages, sessionId } = req.body || {};
+    if (!Array.isArray(messages) || messages.length === 0) {
+      return res.status(400).json({ error: "No question received." });
+    }
+
+    // Sanitize: only valid roles, cap history length and message size.
+    const safeMessages = messages
+      .filter((m) => m && (m.role === "user" || m.role === "assistant") && typeof m.content === "string")
+      .slice(-20)
+      .map((m) => ({ role: m.role, content: m.content.slice(0, 4000) }));
+
+    if (safeMessages.length === 0) {
+      return res.status(400).json({ error: "No question received." });
+    }
+
+    const anthropicRes = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "x-api-key": API_KEY,
+        "anthropic-version": "2023-06-01",
+      },
+      body: JSON.stringify({
+        model: MODEL,
+        max_tokens: 1024,
+        system: SYSTEM_PROMPT,
+        messages: safeMessages,
+      }),
+    });
+
+    if (!anthropicRes.ok) {
+      const errText = await anthropicRes.text();
+      console.error("Anthropic API error:", anthropicRes.status, errText);
+      return res.status(502).json({ error: "The assistant is temporarily unavailable. Please try again." });
+    }
+
+    const data = await anthropicRes.json();
+    let reply = (data.content || [])
+      .filter((b) => b.type === "text")
+      .map((b) => b.text)
+      .join("\n")
+      .trim();
+
+    // Detect and strip the internal review marker before showing the reply.
+    const needsHr = reply.includes(NEEDS_HR_MARKER);
+    if (needsHr) reply = reply.split(NEEDS_HR_MARKER).join("").trim();
+
+    const finalReply = reply || "Sorry, I didn't catch that. Could you rephrase?";
+
+    // Log the question for HR's review page (fire and forget).
+    const lastUser = [...safeMessages].reverse().find((m) => m.role === "user");
+    logQuestion({ question: lastUser?.content || "", answer: finalReply, needsHr, sessionId });
+
+    res.json({ reply: finalReply });
+  } catch (err) {
+    console.error("Chat handler error:", err);
+    res.status(500).json({ error: "Something went wrong. Please try again." });
+  }
+});
+
+// --- Admin (HR review page) ------------------------------------------------
+// Gated with HTTP Basic auth against ADMIN_PASSWORD. Username is ignored.
+function adminAuth(req, res, next) {
+  if (!ADMIN_PASSWORD) {
+    return res.status(503).send("The review page isn't configured yet. Set ADMIN_PASSWORD to enable it.");
+  }
+  const header = req.headers.authorization || "";
+  const [scheme, encoded] = header.split(" ");
+  if (scheme === "Basic" && encoded) {
+    const decoded = Buffer.from(encoded, "base64").toString();
+    const pass = decoded.slice(decoded.indexOf(":") + 1);
+    if (pass && pass === ADMIN_PASSWORD) return next();
+  }
+  res.set("WWW-Authenticate", 'Basic realm="HHN Benefits Review"');
+  return res.status(401).send("Authentication required.");
+}
+
+app.get("/admin", adminAuth, (_req, res) => {
+  res.sendFile(path.join(__dirname, "admin-page.html"));
+});
+
+app.get("/api/admin/questions", adminAuth, async (req, res) => {
+  if (!pool || !dbReady) return res.json({ dbReady: false, rows: [] });
+  try {
+    const filter = req.query.filter;
+    let where = "";
+    if (filter === "needs_hr") where = "WHERE needs_hr = true";
+    else if (filter === "unreviewed") where = "WHERE reviewed = false";
+    const { rows } = await pool.query(
+      `SELECT id, created_at, question, answer, needs_hr, reviewed, session_id
+       FROM questions ${where}
+       ORDER BY created_at DESC
+       LIMIT 500`
+    );
+    res.json({ dbReady: true, rows });
+  } catch (e) {
+    console.error("Could not load questions:", e.message);
+    res.status(500).json({ error: "Could not load questions." });
+  }
+});
+
+app.post("/api/admin/questions/:id/review", adminAuth, async (req, res) => {
+  if (!pool || !dbReady) return res.status(503).json({ error: "Review log isn't available." });
+  const id = parseInt(req.params.id, 10);
+  if (!Number.isInteger(id)) return res.status(400).json({ error: "Bad id." });
+  const reviewed = req.body?.reviewed !== false;
+  try {
+    await pool.query("UPDATE questions SET reviewed = $1 WHERE id = $2", [reviewed, id]);
+    res.json({ ok: true });
+  } catch (e) {
+    console.error("Could not update question:", e.message);
+    res.status(500).json({ error: "Could not update." });
+  }
+});
+
+// --- Static site (the employee-facing assistant) ---------------------------
+app.use(express.static(path.join(__dirname, "public")));
+
+app.get("/healthz", (_req, res) => res.send("ok"));
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`HHN Benefits Assistant running on port ${PORT} (model: ${MODEL})`));
