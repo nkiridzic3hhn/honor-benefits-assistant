@@ -136,8 +136,9 @@
           ${card("This month", money(k.month))}
           ${card("Input tokens", compact(k.inputTokens))}
           ${card("Output tokens", compact(k.outputTokens))}
+          ${card("Cached reads", compact(k.cachedReadTokens || 0), "billed at ~1/10")}
         </div>
-        <p class="note" style="margin-top:12px">Estimate based on logged tokens at ${money(k.rates.input)}/M input and ${money(k.rates.output)}/M output (Claude Sonnet 4.6). Counts start when this tracking went live; your Anthropic Console shows the exact bill.</p>`;
+        <p class="note" style="margin-top:12px">Estimate from logged tokens at ${money(k.rates.input)}/M input and ${money(k.rates.output)}/M output (Claude Sonnet 4.6). The knowledge base is cached, so repeat questions read it at about a tenth of the input price. Counts start when tracking went live; your Anthropic Console shows the exact bill.</p>`;
 
       drawChart(s.daily || []);
       renderBars("topics", (s.topics || []).map((r) => ({ label: prettyTopic(r.topic), n: r.n })));

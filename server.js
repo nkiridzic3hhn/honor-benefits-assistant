@@ -66,6 +66,8 @@ async function initDb() {
     // Add the newer columns if an older table already exists (safe to re-run).
     await pool.query(`ALTER TABLE questions ADD COLUMN IF NOT EXISTS input_tokens INTEGER DEFAULT 0;`);
     await pool.query(`ALTER TABLE questions ADD COLUMN IF NOT EXISTS output_tokens INTEGER DEFAULT 0;`);
+    await pool.query(`ALTER TABLE questions ADD COLUMN IF NOT EXISTS cache_read_tokens INTEGER DEFAULT 0;`);
+    await pool.query(`ALTER TABLE questions ADD COLUMN IF NOT EXISTS cache_write_tokens INTEGER DEFAULT 0;`);
     await pool.query(`ALTER TABLE questions ADD COLUMN IF NOT EXISTS topic TEXT;`);
     await pool.query(`ALTER TABLE questions ADD COLUMN IF NOT EXISTS agency TEXT;`);
     await pool.query(`CREATE INDEX IF NOT EXISTS questions_created_at_idx ON questions (created_at);`);
@@ -95,8 +97,8 @@ async function logQuestion(row) {
   try {
     await pool.query(
       `INSERT INTO questions
-         (question, answer, needs_hr, session_id, input_tokens, output_tokens, topic, agency)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+         (question, answer, needs_hr, session_id, input_tokens, output_tokens, cache_read_tokens, cache_write_tokens, topic, agency)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
       [
         scrubPII(row.question)?.slice(0, 4000) || "",
         scrubPII(row.answer)?.slice(0, 8000) || "",
@@ -104,6 +106,8 @@ async function logQuestion(row) {
         row.sessionId ? String(row.sessionId).slice(0, 100) : null,
         row.inputTokens || 0,
         row.outputTokens || 0,
+        row.cacheReadTokens || 0,
+        row.cacheWriteTokens || 0,
         row.topic || "other",
         row.agency || "none",
       ]
@@ -194,7 +198,10 @@ app.post("/api/chat", async (req, res) => {
       body: JSON.stringify({
         model: MODEL,
         max_tokens: 1024,
-        system: SYSTEM_PROMPT,
+        // Cache the system prompt (persona + knowledge base). It's identical on
+        // every request, so after the first call Claude reads it from cache at
+        // ~1/10 the input price instead of re-charging the full ~8k tokens.
+        system: [{ type: "text", text: SYSTEM_PROMPT, cache_control: { type: "ephemeral" } }],
         messages: safeMessages,
       }),
     });
@@ -227,6 +234,8 @@ app.post("/api/chat", async (req, res) => {
       sessionId,
       inputTokens: usage.input_tokens || 0,
       outputTokens: usage.output_tokens || 0,
+      cacheReadTokens: usage.cache_read_input_tokens || 0,
+      cacheWriteTokens: usage.cache_creation_input_tokens || 0,
     });
 
     res.json({ reply: finalReply });
@@ -261,7 +270,7 @@ app.get("/api/admin/questions", adminAuth, async (req, res) => {
   try {
     const filter = req.query.filter;
     let where = "";
-    if (filter === "needs_hr") where = "WHERE needs_hr = true";
+    if (filter === "needs_hr") where = "WHERE needs_hr = true AND reviewed = false";
     else if (filter === "unreviewed") where = "WHERE reviewed = false";
     const { rows } = await pool.query(
       `SELECT id, created_at, question, answer, needs_hr, reviewed, session_id, topic, agency
@@ -295,8 +304,12 @@ app.get("/api/admin/stats", adminAuth, async (_req, res) => {
         SELECT
           COALESCE(SUM(input_tokens),0)  AS in_tok,
           COALESCE(SUM(output_tokens),0) AS out_tok,
+          COALESCE(SUM(cache_read_tokens),0)  AS cache_read_tok,
+          COALESCE(SUM(cache_write_tokens),0) AS cache_write_tok,
           COALESCE(SUM(input_tokens)  FILTER (WHERE created_at >= date_trunc('month', now())),0) AS in_tok_month,
-          COALESCE(SUM(output_tokens) FILTER (WHERE created_at >= date_trunc('month', now())),0) AS out_tok_month
+          COALESCE(SUM(output_tokens) FILTER (WHERE created_at >= date_trunc('month', now())),0) AS out_tok_month,
+          COALESCE(SUM(cache_read_tokens)  FILTER (WHERE created_at >= date_trunc('month', now())),0) AS cache_read_month,
+          COALESCE(SUM(cache_write_tokens) FILTER (WHERE created_at >= date_trunc('month', now())),0) AS cache_write_month
         FROM questions
       `),
       pool.query(`
@@ -322,8 +335,14 @@ app.get("/api/admin/stats", adminAuth, async (_req, res) => {
     const t = totals.rows[0];
     const k = tokens.rows[0];
     const num = (x) => Number(x) || 0;
-    const cost = (inTok, outTok) =>
-      (num(inTok) / 1e6) * PRICE_IN_PER_MTOK + (num(outTok) / 1e6) * PRICE_OUT_PER_MTOK;
+    // Cache reads are billed at ~10% of input; 5-minute cache writes at ~125%.
+    const CACHE_READ_PER_MTOK = PRICE_IN_PER_MTOK * 0.1;
+    const CACHE_WRITE_PER_MTOK = PRICE_IN_PER_MTOK * 1.25;
+    const cost = (inTok, outTok, cacheRead, cacheWrite) =>
+      (num(inTok) / 1e6) * PRICE_IN_PER_MTOK +
+      (num(outTok) / 1e6) * PRICE_OUT_PER_MTOK +
+      (num(cacheRead) / 1e6) * CACHE_READ_PER_MTOK +
+      (num(cacheWrite) / 1e6) * CACHE_WRITE_PER_MTOK;
 
     res.json({
       dbReady: true,
@@ -336,10 +355,11 @@ app.get("/api/admin/stats", adminAuth, async (_req, res) => {
       messagesTotal: num(t.messages_total),
       needsHr: { total: num(t.needs_hr_total), open: num(t.needs_hr_open) },
       cost: {
-        inputTokens: num(k.in_tok),
+        inputTokens: num(k.in_tok) + num(k.cache_read_tok) + num(k.cache_write_tok),
         outputTokens: num(k.out_tok),
-        total: cost(k.in_tok, k.out_tok),
-        month: cost(k.in_tok_month, k.out_tok_month),
+        cachedReadTokens: num(k.cache_read_tok),
+        total: cost(k.in_tok, k.out_tok, k.cache_read_tok, k.cache_write_tok),
+        month: cost(k.in_tok_month, k.out_tok_month, k.cache_read_month, k.cache_write_month),
         rates: { input: PRICE_IN_PER_MTOK, output: PRICE_OUT_PER_MTOK },
       },
       daily: daily.rows.map((r) => ({ day: r.day, sessions: num(r.sessions), messages: num(r.messages) })),
