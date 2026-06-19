@@ -67,6 +67,9 @@
     <div class="section-title">Usage</div>
     <div class="cards" id="usageCards"><div class="empty">Loading…</div></div>
 
+    <div class="section-title">Daily usage limit (whole tool)</div>
+    <div class="panel" id="limitPanel"><div class="empty">Loading…</div></div>
+
     <div class="section-title">Estimated API cost</div>
     <div class="panel" id="costPanel"><div class="empty">Loading…</div></div>
 
@@ -128,6 +131,19 @@
         card("Total questions", s.messagesTotal),
         card("Needs HR (open)", s.needsHr.open, s.needsHr.total + " total", true),
       ].join("");
+
+      const lim = s.limits;
+      if (lim) {
+        const pct = lim.maxGlobalDay ? Math.min(100, Math.round((lim.globalToday / lim.maxGlobalDay) * 100)) : 0;
+        const near = pct >= 80;
+        document.getElementById("limitPanel").innerHTML = `
+          <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px">
+            <div><b style="font-size:18px;color:var(--navy)">${lim.globalToday}</b> of ${lim.maxGlobalDay} messages used today</div>
+            <div class="note">${pct}%</div>
+          </div>
+          <div class="bar-track" style="height:20px"><div class="bar-fill" style="width:${pct}%;background:${near ? "var(--flag)" : "var(--green)"}"></div></div>
+          <p class="note" style="margin-top:10px">When today's total reaches ${lim.maxGlobalDay}, the assistant pauses for everyone until tomorrow. Per person the caps are ${lim.maxPerIpDay} messages/day and ${lim.maxPerMin}/minute. Limits reset daily (and on redeploy); change them in Railway with MAX_GLOBAL_DAY, MAX_PER_IP_DAY, and MAX_PER_MIN.</p>`;
+      }
 
       const k = s.cost;
       document.getElementById("costPanel").innerHTML = `

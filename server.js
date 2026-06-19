@@ -117,21 +117,65 @@ async function logQuestion(row) {
   }
 }
 
-// --- Simple in-memory rate limit (protects your API bill) ------------------
-const WINDOW_MS = 60_000;
-const MAX_PER_WINDOW = 30;
-const hits = new Map(); // ip -> { count, resetAt }
+// --- Usage limits (protect the API bill) -----------------------------------
+// Three layers, all tunable via env vars:
+//   MAX_PER_MIN     burst cap per person (per IP), per minute
+//   MAX_PER_IP_DAY  total messages one person (per IP) can send in a day
+//   MAX_GLOBAL_DAY  total messages from everyone in a day (backstop)
+// These are in-memory, so they reset on redeploy. They are the first line of
+// defense; for a hard guarantee, also set a monthly spend limit in the
+// Anthropic Console.
+const MAX_PER_MIN = parseInt(process.env.MAX_PER_MIN || "20", 10);
+const MAX_PER_IP_DAY = parseInt(process.env.MAX_PER_IP_DAY || "60", 10);
+const MAX_GLOBAL_DAY = parseInt(process.env.MAX_GLOBAL_DAY || "1500", 10);
 
-function rateLimited(ip) {
-  const now = Date.now();
-  const rec = hits.get(ip);
-  if (!rec || now > rec.resetAt) {
-    hits.set(ip, { count: 1, resetAt: now + WINDOW_MS });
-    return false;
-  }
-  rec.count += 1;
-  return rec.count > MAX_PER_WINDOW;
+const minuteHits = new Map(); // ip -> { count, resetAt }
+const dayHits = new Map(); // ip -> { count, day }
+let globalDay = { day: dayKey(), count: 0 };
+
+function dayKey() {
+  return new Date().toISOString().slice(0, 10);
 }
+
+// Check all limits and, if the request is allowed, count it. Returns either
+// { ok: true } or { ok: false, status, error }.
+function checkAndCount(ip) {
+  const now = Date.now();
+  const day = dayKey();
+
+  if (globalDay.day !== day) globalDay = { day, count: 0 };
+
+  let burst = minuteHits.get(ip);
+  if (!burst || now > burst.resetAt) burst = { count: 0, resetAt: now + 60_000 };
+
+  let perDay = dayHits.get(ip);
+  if (!perDay || perDay.day !== day) perDay = { count: 0, day };
+
+  if (burst.count >= MAX_PER_MIN) {
+    return { ok: false, status: 429, error: "You're sending messages too quickly. Please wait a moment." };
+  }
+  if (globalDay.count >= MAX_GLOBAL_DAY) {
+    return { ok: false, status: 503, error: "The assistant is taking a short break due to high usage. Please try again later, or contact HR for help." };
+  }
+  if (perDay.count >= MAX_PER_IP_DAY) {
+    return { ok: false, status: 429, error: "You've reached today's limit for the assistant. For more help right now, please contact HR." };
+  }
+
+  burst.count += 1;
+  minuteHits.set(ip, burst);
+  perDay.count += 1;
+  dayHits.set(ip, perDay);
+  globalDay.count += 1;
+  return { ok: true };
+}
+
+// Light periodic cleanup so the maps don't grow forever.
+setInterval(() => {
+  const now = Date.now();
+  const day = dayKey();
+  for (const [ip, b] of minuteHits) if (now > b.resetAt) minuteHits.delete(ip);
+  for (const [ip, d] of dayHits) if (d.day !== day) dayHits.delete(ip);
+}, 3_600_000).unref();
 
 // --- Parse and strip the model's hidden review tag -------------------------
 // Tag looks like: [[META | topic: premiums_cost | agency: family_care | answered: no]]
@@ -165,8 +209,9 @@ function parseAndStripTag(text) {
 app.post("/api/chat", async (req, res) => {
   try {
     const ip = req.headers["x-forwarded-for"]?.split(",")[0]?.trim() || req.ip;
-    if (rateLimited(ip)) {
-      return res.status(429).json({ error: "You're sending messages too quickly. Please wait a moment." });
+    const limit = checkAndCount(ip);
+    if (!limit.ok) {
+      return res.status(limit.status).json({ error: limit.error });
     }
 
     if (!API_KEY) {
@@ -354,6 +399,12 @@ app.get("/api/admin/stats", adminAuth, async (_req, res) => {
       },
       messagesTotal: num(t.messages_total),
       needsHr: { total: num(t.needs_hr_total), open: num(t.needs_hr_open) },
+      limits: {
+        globalToday: globalDay.day === dayKey() ? globalDay.count : 0,
+        maxGlobalDay: MAX_GLOBAL_DAY,
+        maxPerIpDay: MAX_PER_IP_DAY,
+        maxPerMin: MAX_PER_MIN,
+      },
       cost: {
         inputTokens: num(k.in_tok) + num(k.cache_read_tok) + num(k.cache_write_tok),
         outputTokens: num(k.out_tok),
