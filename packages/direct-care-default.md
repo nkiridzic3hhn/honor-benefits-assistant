@@ -16,7 +16,7 @@ summary: The default health plan for field caregivers at the ~23 standard agenci
 ## Direct Care medical plans (network: CIGNA, through Multiplan; pharmacy: CerpassRx)
 There are three medical options: MEC, Bronze (EPO), and Gold (PPO).
 
-- MEC plan: an ACA preventive-care plan. Covers preventive services (checkups, screenings, immunizations, well-woman and well-child care) at 100% in-network. It does not cover most other medical services. Cost is a percentage of gross income; see "Direct Care premiums" and confirm the exact figure with HR.
+- MEC plan: an ACA preventive-care plan. Covers preventive services (checkups, screenings, immunizations, well-woman and well-child care) at 100% in-network. It does not cover most other medical services. Cost is a percentage of gross income; see "Direct Care premiums" and confirm the exact figure through the benefits help form.
 - Bronze (EPO, in-network only): higher deductible, lower premium. Best if you don't use much care. No out-of-network coverage.
   - Individual / family deductible: $5,000 / $10,000. Coinsurance: 20%. Out-of-pocket max: $6,850 / $13,700.
   - Primary care $35 copay, specialist $70, urgent care $50, emergency room $500 copay.
@@ -57,7 +57,7 @@ Bi-weekly:
 - MEC: Employee $26.18, Employee + Spouse $64.48, Employee + Child(ren) $52.16, Family $79.98
 - Dental: Employee $17.23, all other tiers $50.28
 - Vision: Employee $2.30, all other tiers $6.43
-Note: there is a known labeling difference in the guide for the "9.96% of gross income" figure (it's shown on the MEC plan in the weekly schedule and on the Bronze plan in the bi-weekly schedule). If someone asks for an exact percentage-based amount, tell them to confirm with HR which plan it applies to.
+Note: there is a known labeling difference in the guide for the "9.96% of gross income" figure (it's shown on the MEC plan in the weekly schedule and on the Bronze plan in the bi-weekly schedule). If someone asks for an exact percentage-based amount, tell them to confirm through the benefits help form which plan it applies to.
 
 ## Direct Care carrier contacts
 - Medical / claims / ID card / providers: Direct Care Administrators, (800) 565-3234, www.directcareadministrators.com
@@ -66,4 +66,4 @@ Note: there is a known labeling difference in the guide for the "9.96% of gross 
 
 ## Direct Care enrollment and changes
 - Enroll: complete the enrollment form at https://hhn.jotform.com/253283952673062 (within 30 days of becoming eligible, at open enrollment, or with a qualifying life event).
-- Any changes to a caregiver's Direct Care benefits go through HR using this form: https://app.smartsheet.com/b/form/8f21030399634aff80ab873214296298
+- Any changes to a caregiver's Direct Care benefits go through the Direct Care changes form: https://app.smartsheet.com/b/form/8f21030399634aff80ab873214296298
