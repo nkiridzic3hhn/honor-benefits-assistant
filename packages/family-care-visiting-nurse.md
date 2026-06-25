@@ -5,12 +5,12 @@ type: agency
 locked: false
 default_enabled: true
 order: 20
-routing_on: Family Care Visiting Nurse (CT), legally Family Care Visiting Nurse & Home Care Agency, LLC — field caregivers are on UnitedHealthcare (NexusACO OA), NOT Direct Care. Use the loaded block below for caregivers. For an office / admin employee at this agency, do not assume Engage or UHC; route to HR to confirm.
-routing_off: Family Care Visiting Nurse (CT), legally Family Care Visiting Nurse & Home Care Agency, LLC — recognized, but its plan details are turned off right now. Do NOT fall back to the Engage or Direct Care defaults. Confirm you recognize the agency, say its specific details aren't available in this tool right now, and route health questions to HR (benefits help form or HR@honorhealthnetwork.com). The 401(k) is still the same for them and can be answered normally.
+routing_on: Family Care Visiting Nurse (CT), legally Family Care Visiting Nurse & Home Care Agency, LLC — field caregivers are on UnitedHealthcare (NexusACO OA), NOT Direct Care. Use the loaded block below for caregivers. For an office / admin employee at this agency, do not assume Engage or UHC; route to the benefits help form to confirm.
+routing_off: Family Care Visiting Nurse (CT), legally Family Care Visiting Nurse & Home Care Agency, LLC — recognized, but its plan details are turned off right now. Do NOT fall back to the Engage or Direct Care defaults. Confirm you recognize the agency, say its specific details aren't available in this tool right now, and route health questions to the benefits help form. The 401(k) is still the same for them and can be answered normally.
 summary: Connecticut agency whose field caregivers are on UnitedHealthcare (NexusACO OA) instead of Direct Care. Has its own loaded medical/dental/vision/Rx detail.
 ---
 ## Family Care Visiting Nurse (CT) — LOADED
-Who this covers: employees of Family Care Visiting Nurse & Home Care Agency, LLC, in Connecticut. Field caregivers here are on UnitedHealthcare, not Direct Care. If an office / admin employee at this agency asks, do not assume Engage or UHC; route them to HR to confirm (benefits help form or HR@honorhealthnetwork.com).
+Who this covers: employees of Family Care Visiting Nurse & Home Care Agency, LLC, in Connecticut. Field caregivers here are on UnitedHealthcare, not Direct Care. If an office / admin employee at this agency asks, do not assume Engage or UHC; route them to the benefits help form to confirm.
 
 Carrier and network: UnitedHealthcare (UHC), NexusACO OA plan, Connecticut. You choose a primary care physician (PCP), and per the plan summaries you can see a specialist without a referral. These are in-network plans: a "Designated Network" tier costs you the least, the broader "Network" tier costs a bit more, and out-of-network care is generally not covered except emergencies.
 
@@ -31,9 +31,9 @@ Dental (UnitedHealthcare PPO), two options:
 - $1,000 per-person annual maximum: $50 individual / $150 family deductible. Preventive and diagnostic covered at 100%; basic services 90% in-network (75% out-of-network); major services 60% in-network (50% out-of-network).
 - $750 per-person annual maximum: $50 / $150 deductible. Diagnostic, preventive, and basic services 80%; major services 50%.
 
-Vision (UnitedHealthcare): comprehensive eye exam every 12 months, eyeglass lenses every 12 months, frames every 24 months, and contacts (instead of glasses) every 12 months. For exact copays and frame/contact allowances, check with UHC or HR.
+Vision (UnitedHealthcare): comprehensive eye exam every 12 months, eyeglass lenses every 12 months, frames every 24 months, and contacts (instead of glasses) every 12 months. For exact copays and frame/contact allowances, use the benefits help form.
 
-Premiums: premiums are taken as a weekly deduction from your paycheck. The exact dollar amounts by plan and coverage tier are not loaded in this assistant yet; for current premium amounts, contact HR (benefits help form or HR@honorhealthnetwork.com).
+Premiums: premiums are taken as a weekly deduction from your paycheck. The exact dollar amounts by plan and coverage tier are not loaded in this assistant yet; for current premium amounts, use the benefits help form.
 
 Member account and ID cards: download and register on the UnitedHealthcare app, or use myuhc.com, to see your ID card, benefits, and claims. Member services: (888) 331-3408. Non-members can look up plan information at welcometouhc.com.
 
@@ -41,4 +41,4 @@ Enroll or waive coverage:
 - Enroll in or waive medical, dental, and/or vision: https://hhn.jotform.com/260824439657972
 - Waive all coverage: https://hhn.jotform.com/260843368264968
 
-Changing coverage during the year: you can only drop or change coverage during open enrollment, unless you have a qualifying life event (such as loss of other coverage, marriage, or birth of a child) or a change in employment status (such as moving to part-time). Report a qualifying life event to HR within 30 days.
+Changing coverage during the year: you can only drop or change coverage during open enrollment, unless you have a qualifying life event (such as loss of other coverage, marriage, or birth of a child) or a change in employment status (such as moving to part-time). Report a qualifying life event through the benefits help form within 30 days.

@@ -6,7 +6,7 @@ locked: false
 default_enabled: true
 order: 21
 routing_on: First Horizon (IN), First Horizon Home Health Care — all employees are on the agency's own Anthem (medical) and Principal (dental, vision, life) plans, NOT Engage or Direct Care. Use the loaded block below for any role at this agency.
-routing_off: First Horizon (IN), First Horizon Home Health Care — recognized, but its plan details are turned off right now. Do NOT fall back to the Engage or Direct Care defaults. Confirm you recognize the agency, say its specific details aren't available in this tool right now, and route health questions to HR (benefits help form or HR@honorhealthnetwork.com). The 401(k) is still the same for them and can be answered normally.
+routing_off: First Horizon (IN), First Horizon Home Health Care — recognized, but its plan details are turned off right now. Do NOT fall back to the Engage or Direct Care defaults. Confirm you recognize the agency, say its specific details aren't available in this tool right now, and route health questions to the benefits help form. The 401(k) is still the same for them and can be answered normally.
 summary: Indiana agency where ALL employees (office and field) are on First Horizon's own Anthem medical and Principal dental/vision/life plans. Has its own fully loaded detail.
 ---
 ## First Horizon (IN) — LOADED
@@ -45,4 +45,4 @@ VOLUNTARY LIFE — Principal (employee-paid, premiums bi-weekly, based on age).
 - Dependent children: $5,000 or $10,000 (covers all children); guaranteed issue $10,000.
 - Bi-weekly rate per $1,000 of coverage by employee age: under 25 and 25–29 = $0.117; 30–34 = $0.134; 35–39 = $0.365; 40–44 = $0.296; 45–49 = $0.439; 50–54 = $0.712; 55–59 = $1.139; 60–64 = $1.727; 65–69 = $2.936; 70+ = $5.302 (benefits reduce at 65 and again at 70). To estimate a bi-weekly premium, multiply the rate for the person's age by the number of thousands of coverage (for example, $30,000 at age 42 is 0.296 × 30 = about $8.88 bi-weekly). Dependent children cost $0.41 bi-weekly for $5,000 or $0.92 for $10,000.
 
-Carrier contacts: Anthem medical 800-552-9159, anthem.com (network: Blue Access). Principal (dental, vision, life) 800-247-4695, principal.com. For enrollment paperwork or to make a change after a qualifying event, contact HR (benefits help form or HR@honorhealthnetwork.com).
+Carrier contacts: Anthem medical 800-552-9159, anthem.com (network: Blue Access). Principal (dental, vision, life) 800-247-4695, principal.com. For enrollment paperwork or to make a change after a qualifying event, use the benefits help form.

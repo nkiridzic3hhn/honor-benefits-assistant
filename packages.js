@@ -105,10 +105,10 @@ export function assembleKnowledge(pkgs, enabledState) {
 
   const engageStatus = engage && on(engage)
     ? "ENGAGE"
-    : "ENGAGE (NOTE: the Engage plan package is currently OFF — do not give Engage plan details; route office / admin health questions to HR)";
+    : "ENGAGE (NOTE: the Engage plan package is currently OFF — do not give Engage plan details; route office / admin health questions to the benefits help form)";
   const directCareStatus = directCare && on(directCare)
     ? "DIRECT CARE"
-    : "DIRECT CARE (NOTE: the Direct Care plan package is currently OFF — do not give Direct Care plan details; route field caregiver health questions to HR)";
+    : "DIRECT CARE (NOTE: the Direct Care plan package is currently OFF — do not give Direct Care plan details; route field caregiver health questions to the benefits help form)";
 
   // Buckets B (loaded overrides) and C (recognized but off / not loaded).
   const loaded = agencies.filter(on);
@@ -124,7 +124,7 @@ export function assembleKnowledge(pkgs, enabledState) {
     "B) OVERRIDE AGENCIES WITH LOADED PLANS — do NOT use the default. Use the agency's own block in the AGENCY-SPECIFIC OVERRIDES section below.\n" +
     loadedLines +
     "\n\n" +
-    "C) RECOGNIZED BUT NOT LOADED RIGHT NOW — these agencies are known, but their plan details are NOT available in this tool right now (a different carrier, or turned off). Do NOT fall back to the Engage or Direct Care defaults for their health benefits, because that would give the wrong plan. Instead, confirm you recognize the agency, explain that their specific medical / dental / vision details aren't in this tool right now, and send them to HR (benefits help form or HR@honorhealthnetwork.com). The 401(k) is still the same for them and can be answered normally.\n" +
+    "C) RECOGNIZED BUT NOT LOADED RIGHT NOW — these agencies are known, but their plan details are NOT available in this tool right now (a different carrier, or turned off). Do NOT fall back to the Engage or Direct Care defaults for their health benefits, because that would give the wrong plan. Instead, confirm you recognize the agency, explain that their specific medical / dental / vision details aren't in this tool right now, and send them to the benefits help form. The 401(k) is still the same for them and can be answered normally.\n" +
     offLines;
 
   // {{PLAN_PACKAGES}} — the enabled plan/agency content blocks.

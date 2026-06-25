@@ -6,8 +6,8 @@ locked: false
 default_enabled: true
 order: 22
 routing_on: IRN Home Care (CO), IRN Intl Co. — ALL employees (office / admin AND field caregivers) are on the agency's own Kaiser Permanente HMO plan, NOT Direct Care or Engage. The same single plan applies to everyone, so you do NOT need to know the person's role for IRN — only that they work for IRN. Use the loaded block below. IRN does not offer dental or vision through this plan.
-routing_off: IRN Home Care (CO) — uses Kaiser Permanente (Colorado), not Direct Care, and its plan details are turned off right now. Do NOT fall back to the Engage or Direct Care defaults. Confirm you recognize the agency, say its specific details aren't available in this tool right now, and route health questions to HR. The 401(k) is still the same for them and can be answered normally.
-summary: Colorado agency on a single Kaiser Permanente HDHP/HMO plan — same for all office and field staff, no dental/vision. LEVR supplemental plans added 4/1/2026 (details via HR).
+routing_off: IRN Home Care (CO) — uses Kaiser Permanente (Colorado), not Direct Care, and its plan details are turned off right now. Do NOT fall back to the Engage or Direct Care defaults. Confirm you recognize the agency, say its specific details aren't available in this tool right now, and route health questions to the benefits help form. The 401(k) is still the same for them and can be answered normally.
+summary: Colorado agency on a single Kaiser Permanente HDHP/HMO plan — same for all office and field staff, no dental/vision. LEVR supplemental plans added 4/1/2026 (details via the benefits help form).
 ---
 ## IRN Home Care (CO) — LOADED
 Who this covers: all employees of IRN Home Care (IRN Intl Co.) in Colorado. There is ONE plan and it is the same for everyone — office / admin and field caregivers alike. You do NOT need to ask the person's role for IRN; once you know they work for IRN, you can answer from this block. IRN employees are NOT on Direct Care or Engage.
@@ -16,9 +16,9 @@ Carrier and plan: Kaiser Permanente (Kaiser Foundation Health Plan of Colorado).
 
 Plan year / coverage period: November 1, 2025 to October 31, 2026.
 
-Dental and vision: IRN does NOT offer dental or vision coverage through this plan. There is no adult dental, adult vision, pediatric dental, or children's glasses benefit. If someone asks about dental or vision, tell them IRN's Kaiser plan doesn't include it, and point them to HR for any other options.
+Dental and vision: IRN does NOT offer dental or vision coverage through this plan. There is no adult dental, adult vision, pediatric dental, or children's glasses benefit. If someone asks about dental or vision, tell them IRN's Kaiser plan doesn't include it, and point them to the benefits help form for any other options.
 
-LEVR supplemental plans: As of April 1, 2026, IRN also offers LEVR supplemental health plans. The specific coverage and enrollment details for LEVR are not loaded in this tool yet — for what LEVR covers and how to sign up, point the person to HR (benefits help form or HR@honorhealthnetwork.com).
+LEVR supplemental plans: As of April 1, 2026, IRN also offers LEVR supplemental health plans. The specific coverage and enrollment details for LEVR are not loaded in this tool yet — for what LEVR covers and how to sign up, point the person to the benefits help form.
 
 ### Deductible and out-of-pocket (per coverage period)
 - Deductible: $7,050 individual / $14,100 family. Embedded — each member meets their own individual deductible; the family deductible is met by two or more members.
@@ -56,10 +56,10 @@ Acupuncture, bariatric surgery, chiropractic care, cosmetic surgery, adult denta
 Adams, Arapahoe, Boulder, Broomfield, Clear Creek, Denver, Douglas, El Paso, Elbert, Fremont, Gilpin, Jefferson, Larimer, Park, Pueblo, Teller, and Weld. (The KP Select plan is El Paso and Teller counties only.)
 
 ### Premiums
-The per-paycheck premium amounts for the IRN Kaiser plan are not loaded in this tool yet. For current premium costs, point the person to HR (benefits help form or HR@honorhealthnetwork.com).
+The per-paycheck premium amounts for the IRN Kaiser plan are not loaded in this tool yet. For current premium costs, point the person to the benefits help form.
 
 ### Enrolling or making changes
-- Enrollment uses the Kaiser Permanente Group Enrollment/Change Form (company on file: IRN Intl Co.; form ID 0106-0046-02-r07). Use it for a new hire, open enrollment, adding or removing dependents, name/address changes, or COBRA. Dependents must be added within 31 days of becoming eligible. To get the form or for help completing it, contact HR (benefits help form or HR@honorhealthnetwork.com).
+- Enrollment uses the Kaiser Permanente Group Enrollment/Change Form (company on file: IRN Intl Co.; form ID 0106-0046-02-r07). Use it for a new hire, open enrollment, adding or removing dependents, name/address changes, or COBRA. Dependents must be added within 31 days of becoming eligible. To get the form or for help completing it, use the benefits help form.
 - To cancel coverage, call Kaiser Member Services: 303-338-3800 or 1-800-632-9700 (TTY: 303-338-3820).
 - Like the other plans, outside of open enrollment you can only change coverage with a qualifying life event reported within the required window.
 
