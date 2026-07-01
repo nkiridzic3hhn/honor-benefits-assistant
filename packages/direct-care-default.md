@@ -6,14 +6,14 @@ slot: direct_care
 locked: false
 default_enabled: true
 order: 11
-summary: The default health plan for field caregivers at the ~23 standard agencies — Direct Care Administrators medical (CIGNA network), Guardian dental/vision, CerpassRx pharmacy, per-paycheck premiums. Turn off only if Direct Care details should not be given.
+summary: The default health plan for field caregivers at the ~23 standard agencies — Direct Care Administrators medical (Multiplan network), Guardian dental/vision, CerpassRx pharmacy, per-paycheck premiums. Turn off only if Direct Care details should not be given.
 ---
 =====================================================================
 # FIELD CAREGIVER BENEFITS — DIRECT CARE (Direct Care Administrators medical, Guardian dental/vision)
 # Premiums are PER PAYCHECK (weekly or bi-weekly), pre-tax, and reflect the employee cost.
 =====================================================================
 
-## Direct Care medical plans (network: CIGNA, through Multiplan; pharmacy: CerpassRx)
+## Direct Care medical plans (network: Multiplan; pharmacy: CerpassRx)
 There are three medical options: MEC, Bronze (EPO), and Gold (PPO).
 
 - MEC plan: an ACA preventive-care plan. Covers preventive services (checkups, screenings, immunizations, well-woman and well-child care) at 100% in-network. It does not cover most other medical services. Cost is a percentage of gross income; see "Direct Care premiums" and confirm the exact figure through the benefits help form.
@@ -43,7 +43,7 @@ There are three medical options: MEC, Bronze (EPO), and Gold (PPO).
 ## Accessing your Direct Care medical account
 - Website: www.directcareadministrators.com (Member/Provider Login), or call (800) 565-3234, 7:30am to 5:00pm MST. App: "Direct Care Administrators."
 - Login: your username is your Social Security number (no spaces or dashes) and your PIN is your full birth date as MMDDYYYY. (The assistant will never ask you for these; this is just how the website login works.)
-- Find an in-network provider: on the site, use Provider Networks to search the CIGNA / Multiplan network. If your provider isn't listed, call (800) 565-3234 and they can reach out to the provider for you.
+- Find an in-network provider: use the Multiplan provider search at https://providersearch.multiplan.com/. If your provider isn't listed, call Direct Care Administrators at (800) 565-3234 and they can reach out to the provider for you.
 
 ## Direct Care premiums (PER PAYCHECK, pre-tax, employee cost)
 Weekly:
@@ -65,5 +65,5 @@ Note: there is a known labeling difference in the guide for the "9.96% of gross 
 - Dental and vision: Guardian, (888) 482-7342, www.guardiananytime.com
 
 ## Direct Care enrollment and changes
-- Enroll: complete the enrollment form at https://hhn.jotform.com/253283952673062 (within 30 days of becoming eligible, at open enrollment, or with a qualifying life event).
-- Any changes to a caregiver's Direct Care benefits go through the Direct Care changes form: https://app.smartsheet.com/b/form/8f21030399634aff80ab873214296298
+- Enrollment is handled directly by HR. Do not share an enrollment form link. If someone asks about enrolling, direct them to the health benefits help form: https://app.smartsheet.com/b/form/8f21030399634aff80ab873214296298
+- Any changes to a caregiver's Direct Care benefits go through the same form: https://app.smartsheet.com/b/form/8f21030399634aff80ab873214296298

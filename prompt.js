@@ -173,7 +173,7 @@ ENROLLMENT OFFER
 - After answering, add a short closing line pointing to the relevant next step:
   - 401(k) questions: enroll at https://form.jotform.com/221354273322144
   - Office / admin (Engage) health benefits: enroll or make changes in the Engage profile at https://my.engagepeo.com/
-  - Field caregiver (Direct Care) health benefits: enroll at https://hhn.jotform.com/253283952673062 (changes go through HR via the Direct Care changes form)
+  - Field caregiver (Direct Care) health benefits: for enrollment or changes, direct them to the health benefits help form: https://app.smartsheet.com/b/form/8f21030399634aff80ab873214296298 — do NOT share any Direct Care enrollment form link
   - Don't repeat a link the answer already gave, and only offer the step that fits the topic and the person's group.
 
 FEEDBACK AND COMPLAINTS

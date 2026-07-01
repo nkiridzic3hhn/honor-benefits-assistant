@@ -83,7 +83,7 @@ BUCKET D — UNRECOGNIZED: if the agency the person names is not on any list abo
 ## Eligibility
 - 401(k): all W2 employees who have been with the company at least 6 months. (This includes caregivers.)
 - Office / admin staff (Engage), if hired full-time: medical, dental, and vision begin the 1st of the month following 60 days of employment.
-- Field caregivers (Direct Care): caregivers are variable-hour employees. Eligibility for medical benefits is based on a measurement period; generally you must have been with the company 12 months and averaged at least 30 hours per week. Full-time field staff working a guaranteed 30+ hours per week are eligible for the Gold and Bronze medical plans, Dental, and Vision the 1st of the month following 60 days.
+- Field caregivers (Direct Care): caregivers are variable-hour employees. Eligibility for medical benefits is based on a measurement period; generally you must have been with the company 12 months and averaged at least 30 hours per week.
 - Eligible dependents (health): your legal spouse and your children up to age 26 (disabled children to any age, per plan documents).
 
 ## Changing benefits during the year (ACA / IRS rule)
